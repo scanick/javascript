@@ -367,7 +367,7 @@
 				angle = Math.PI + angle;		//что бы его снять, в левой полуоси ОХ относительно центра добавляем Пи
 			var hyp = Math.hypot(katx, katy);//длина радиус-вектора от центра поля до точки касания
 			for(var mon of months_list){
-				var dm = mon.ingoing([angle, hyp]);
+				var dm = mon.ingoing([angle, hyp]);//В случае попадания вернёт массив [0] - день, [1] - название месяца
 				if(dm){
 					console.log( dm[0] + "." +dm[1] + "." + year);
 					break;

@@ -5,7 +5,7 @@
 	};
 
 })( this.kernel = {} );
-$(function() {
+$(function() {//точка входа
 	kernel.init();
 	events.init();
 });
