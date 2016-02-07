@@ -36,10 +36,10 @@
 		},
 	}
 
-	var color = {
+	var Colors = {
 		ground: '#F8F8FF',
-		external: '#000000',
-		edgeDay: [ ['#081472','#717DD7'], ['#62DA97','#007633'], ['#FFBE73','#FF8900'], ['#63ADD0','#086FA1'] ],
+		day: [ ['#F0FFF0', '#0B4C5F'], ['#FFE4E1', '#610B0B'] ],
+		month: ['#DCDCDC', '#1C1C1C'],
 		obj: ['#029DAF', '#E5D599', '#FFC219', '#F07C19', '#E32551'],
 		selObj: '#FF0044',
 	};
@@ -59,7 +59,7 @@
 			this.fHeight *=0.97; // Высота поля
 			this.center[0] = this.fWidth/2; // Х центра поля
 			this.center[1] = this.fHeight/2;// У центра поля
-			this.radiusExternal = this.fWidth > this.fHeight ? 3*this.fHeight/7 : 3*this.fWidth/7; // Внешний радиус календаря
+			this.radiusExternal = this.fWidth > this.fHeight ? 2*this.fHeight/5 : 2*this.fWidth/5; // Внешний радиус календаря
 			this.radiusInner = this.radiusExternal/1.5; // Внутренний радиус календаря
 			this.radiusInnerMonth = this.radiusExternal/1.65; // Внутренний радиус для подписи месяцев календаря
 			this.radiusMonthСurrent = this.radiusExternal * 1.10; // Внешний радиус текущего месяца календаря
@@ -76,7 +76,7 @@
 		* private variables
 		**=======================================================================================================*/
 		var self = this;
-		var color = ['#086A87', '#0B4C5F'];
+		var color = Colors.day[0];
 		var surface = [ [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0] ];//[X1,Y1], [X2,Y2], [X3,Y3], [X4,Y4]
 		var sector = [0, 0]; //[phi1, phi2]
 		var date = 0;//1-31
@@ -196,7 +196,7 @@
 		* private variables
 		**=======================================================================================================*/
 		var self = this;
-		var color = ['#2E2E2E', '#2E2E2E'];
+		var color = Colors.month;
 		var surface = [ [0, 0], [0, 0], [0, 0], [0, 0] ];//[X1,Y1], [X2,Y2], [X3,Y3], [X4,Y4]
 		var sector = [0, 0]; //[phi1, phi2]
 		var month = 0;//0-11
@@ -219,7 +219,7 @@
 				var d = new classDay();
 				d.init(i, dayOfWeek++);
 				days_list.push(d);
-				if( dayOfWeek > 6)	d.setColor(['#FA5858', '#610B0B']);
+				if( dayOfWeek > 6)	d.setColor(Colors.day[1]);
 				if( dayOfWeek > 7)	dayOfWeek = 1;
 			}
 			calculationSector();
@@ -423,7 +423,7 @@
 **=================================================================================================================*/
 	clear = function() {
 		ctx.clearRect(0, 0, field.fWidth, field.fHeight)
-		ctx.fillStyle = color.ground; // меняем цвет
+		ctx.fillStyle = Colors.ground; // меняем цвет
 		ctx.fillRect(0, 0, field.fWidth, field.fHeight);//Закрашиваем область
 		ctx.fill();
 	};
@@ -433,7 +433,7 @@
 		var re = field.radiusExternal;
 		var lw = 0;
 		/*createRadialGradient(X_star, Y_start, Radius_inner, X_end, Y_end, Radius_external)*/
-		var grdr = ctx.createRadialGradient(field.center[0],field.center[1],field.radiusInner, field.center[0], field.center[1], field.radiusDayСurrent);
+		var grdr = ctx.createRadialGradient(field.center[0],field.center[1],field.radiusInner, field.center[0], field.center[1], obj.getRadiusExternal());
 		grdr.addColorStop( 0, obj.getColor()[0] );//Color_start
 		grdr.addColorStop( 1, obj.getColor()[1] );//Color_end
 		ctx.strokeStyle = grdr; // меняем цвет
@@ -458,24 +458,11 @@
 			ctx.lineWidth = lw;
 			ctx.stroke();
 		}
-		//Первая линия  - начало объекта
-		/* ctx.beginPath();
-			ctx.moveTo( surface[0][0], 	surface[0][1] );
-			ctx.lineTo( surface[1][0], 	surface[1][1] );
-		ctx.closePath();
-		ctx.lineWidth = lw;
-		ctx.stroke();
-		//Вторая линия - конец объекта
-		ctx.beginPath();
-			ctx.moveTo( surface[2][0], 	surface[2][1] );
-			ctx.lineTo( surface[3][0], 	surface[3][1] );
-		ctx.closePath();
-		ctx.lineWidth = lw;
-		ctx.stroke(); */
+		
 	};
 
 	drawPunkt = function(punkt){
-		ctx.fillStyle = color.selObj; // меняем цвет
+		ctx.fillStyle = Colors.selObj; // меняем цвет
 		ctx.fillRect(punkt[0]-2, punkt[1]-2, 2, 2);//Закрашиваем область
 		ctx.fill();
 	};
