@@ -4,6 +4,9 @@
 **===============================================================================================================*/
 	var canva, ctx;
 
+	var anim = false, globalID;
+	var timeout = 1000, fps = 35, dt = timeout/fps;
+
 	var year;
 
 	var dates = {
@@ -267,6 +270,7 @@
 		};
 		
 		this.draw = function(){
+			draw(self);
 			drawDay();
 		};
 		
@@ -311,11 +315,13 @@
 			}
 		}.bind(this);
 		var drawDay = function(){//
-			for(var day of days_list){
-				draw(day);
-			}
-			/* draw(days_list[days_list.length-1]);
-			draw(days_list[0]); */
+			/* for(var day of days_list){	draw(day);	} */
+			var i = 0;
+			var fps = 50; // число кадров в секунду
+			var timer = setInterval(function() {
+				if (i >= days_list.length) clearInterval(timer);
+				else draw(days_list[i++]);
+			}, 1000 / fps);
 		}.bind(this);
 	};
 
@@ -378,12 +384,15 @@
 		* private function
 		**========================================================================================================*/
 		var drawMonath = function(){//
-			for(var mon of months_list){
+			/* for(var mon of months_list){
 				mon.draw();
-				draw(mon);
-			}
-			/* draw(months_list[0]);
-			months_list[0].draw(); */
+			} */
+			var i = 0;
+			var fps = 35; // число кадров в секунду
+			var timer = setInterval(function() {
+				if (i >= months_list.length) clearInterval(timer);
+				else months_list[i++].draw();
+			}, 1000 / fps);
 		}.bind(this);
 	};
 
