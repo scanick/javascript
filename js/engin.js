@@ -407,9 +407,10 @@
 		canva.width = field.fWidth;
 		canva.height = field.fHeight;
 		ctx = canva.getContext('2d');
-		clear();
+		
 		year = new classYear();
 		year.init();
+		clear();
 		year.draw();
 	};
 
@@ -421,7 +422,7 @@
 				break;
 			case "mouseClick": 
 				year.ingoing(data);
-				drawPunkt(data);
+				//drawPunkt(data);
 				break;
 			default: break;
 		}
@@ -452,7 +453,16 @@
 							re = field.radiusDayСurrent;
 						} */
 				break;
-			case "month": lw = 2;
+			case "month": lw = 3;
+						ctx.font = "15px Comic Sans MS";
+						var name = obj.getName();
+						var d_angelLitera = Math.abs(obj.getSector()[0] - obj.getSector()[1]) / (name.length + 1);
+						for( var mt = 0; mt < name.length; mt++){
+							s = Math.sin(obj.getSector()[0] + mt*d_angelLitera + d_angelLitera);
+							c = Math.cos(obj.getSector()[0] + mt*d_angelLitera + d_angelLitera);
+							ctx.strokeText(name[mt], field.center[0] + re * c, field.center[1] + re * s);
+						}
+						//ctx.strokeText(obj.getName(), surface[1][0] , surface[1][1]);
 						/* if( obj.isCurrent() ){
 							re = field.radiusMonthСurrent;
 						} */
