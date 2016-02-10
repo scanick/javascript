@@ -45,11 +45,13 @@
 		month: ['#DCDCDC', '#1C1C1C'],
 		obj: ['#029DAF', '#E5D599', '#FFC219', '#F07C19', '#E32551'],
 		selObj: '#FF0044',
+		fontMonth: '#000000',
 	};
 
 	var field = {
 		fWidth: window.innerWidth,	// Ширина поля
 		fHeight: window.innerHeight,// Высота поля
+		fontMonth: '15px Comic Sans MS',
 		center: [0, 0],				// ХУ центра поля
 		radiusExternal: 0,			// Внешний радиус календаря
 		radiusInner: 0, 			// Внутренний радиус календаря
@@ -63,8 +65,8 @@
 			this.center[0] = this.fWidth/2; // Х центра поля
 			this.center[1] = this.fHeight/2;// У центра поля
 			this.radiusExternal = this.fWidth > this.fHeight ? 2*this.fHeight/5 : 2*this.fWidth/5; // Внешний радиус календаря
-			this.radiusInner = this.radiusExternal/1.5; // Внутренний радиус календаря
-			this.radiusInnerMonth = this.radiusExternal/1.65; // Внутренний радиус для подписи месяцев календаря
+			this.radiusInner = this.radiusExternal/1.7; // Внутренний радиус календаря
+			this.radiusInnerMonth = this.radiusExternal/0.93; // Внутренний радиус для подписи месяцев календаря
 			this.radiusMonthСurrent = this.radiusExternal * 1.10; // Внешний радиус текущего месяца календаря
 			this.radiusWeekCurrent = this.radiusExternal * 1.15; // Внешний радиус текущей недели календаря
 			this.radiusDayСurrent = this.radiusExternal * 1.20; // Внешний радиус текущего дня календаря
@@ -257,6 +259,10 @@
 			return name;
 		};
 		
+		this.getNumberMonth = function(){
+			return month;
+		};
+		
 		this.getType = function(){
 			return 'month';
 		};
@@ -442,25 +448,37 @@
 		var surface = obj.getSurface();
 		var re = field.radiusExternal;
 		var lw = 0;
-		/*createRadialGradient(X_star, Y_start, Radius_inner, X_end, Y_end, Radius_external)*/
-		var grdr = ctx.createRadialGradient(field.center[0],field.center[1],field.radiusInner, field.center[0], field.center[1], obj.getRadiusExternal());
-		grdr.addColorStop( 0, obj.getColor()[0] );//Color_start
-		grdr.addColorStop( 1, obj.getColor()[1] );//Color_end
-		ctx.strokeStyle = grdr; // меняем цвет
+		
+		
 		switch(obj.getType()){
 			case 'day': lw = 1;
 						/* if( obj.isCurrent() ){
 							re = field.radiusDayСurrent;
 						} */
 				break;
-			case "month": lw = 3;
-						ctx.font = "15px Comic Sans MS";
-						var name = obj.getName();
-						var d_angelLitera = Math.abs(obj.getSector()[0] - obj.getSector()[1]) / (name.length + 1);
-						for( var mt = 0; mt < name.length; mt++){
-							s = Math.sin(obj.getSector()[0] + mt*d_angelLitera + d_angelLitera);
-							c = Math.cos(obj.getSector()[0] + mt*d_angelLitera + d_angelLitera);
-							ctx.strokeText(name[mt], field.center[0] + re * c, field.center[1] + re * s);
+			case "month": lw = 2;
+						if(!obj.isCurrent()){
+							ctx.strokeStyle = Colors.fontMonth;
+							ctx.font = field.fontMonth;
+							var name = obj.getName();
+							var sector = obj.getSector();
+							var d_angelLitera = Math.abs(sector[0] - sector[1]) / (name.length + 1);
+							if(obj.getNumberMonth() < 6 || obj.getNumberMonth() > 9){
+								console.log(obj.getNumberMonth() + "  " + sector[0]);
+								for( var mt = 0; mt < name.length; mt++){
+									var s = Math.sin(sector[0] + mt*d_angelLitera + d_angelLitera);
+									var c = Math.cos(sector[0] + mt*d_angelLitera + d_angelLitera);
+									ctx.strokeText(name[mt], field.center[0] + field.radiusInnerMonth * c, field.center[1] +  field.radiusInnerMonth * s);
+								}
+							}
+							else{
+								console.log(obj.getNumberMonth() + "  " + sector[0]);
+								for( var mt = name.length - 1; mt >=0 ; mt--){
+									var s = Math.sin(sector[0] + mt*d_angelLitera + d_angelLitera);
+									var c = Math.cos(sector[0] + mt*d_angelLitera + d_angelLitera);
+									ctx.strokeText(name[name.length - (mt+1)], field.center[0] + field.radiusInnerMonth * c, field.center[1] +  field.radiusInnerMonth * s);
+								}
+							}
 						}
 						//ctx.strokeText(obj.getName(), surface[1][0] , surface[1][1]);
 						/* if( obj.isCurrent() ){
@@ -469,6 +487,13 @@
 				break;
 			default: break;
 		}
+		
+		/*createRadialGradient(X_star, Y_start, Radius_inner, X_end, Y_end, Radius_external)*/
+		var grdr = ctx.createRadialGradient(field.center[0],field.center[1],field.radiusInner, field.center[0], field.center[1], obj.getRadiusExternal());
+		grdr.addColorStop( 0, obj.getColor()[0] );//Color_start
+		grdr.addColorStop( 1, obj.getColor()[1] );//Color_end
+		ctx.strokeStyle = grdr; // меняем цвет
+		
 		for(var i = 0; i < surface.length; i += 2){
 			ctx.beginPath();
 				ctx.moveTo( surface[i][0], 		surface[i][1] );
